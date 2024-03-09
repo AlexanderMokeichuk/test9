@@ -1,10 +1,14 @@
+import Layout from "./component/Layout/Layout.tsx";
+import {Routes} from "react-router-dom";
 
 function App() {
 
   return (
-    <>
-      App
-    </>
+    <Layout>
+      <Routes>
+
+      </Routes>
+    </Layout>
   );
 }
 
