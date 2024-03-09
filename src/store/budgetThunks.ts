@@ -77,6 +77,7 @@ export const fetchTransactions = createAsyncThunk<Transaction[] | [], undefined>
       });
 
       const arrayTransaction: Transaction[] = [];
+      const arrayId: string[] = [];
 
       transactions.forEach((item) => {
         const category = categories[item.category];
@@ -87,8 +88,15 @@ export const fetchTransactions = createAsyncThunk<Transaction[] | [], undefined>
             createdAt: item.createdAt,
             id: item.id,
           });
+        } else {
+          arrayId.push(item.id);
         }
       });
+
+      arrayId.map( async (id) => {
+        await axiosApi.delete(`/transactions/${id}.json`);
+      });
+
 
       return arrayTransaction;
     }
