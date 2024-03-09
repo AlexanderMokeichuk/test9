@@ -1,10 +1,16 @@
 import React, {FormEvent, useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
-import {canselModalTransaction, selectCategories, selectModal} from "../../store/budgetSlice.ts";
-import {FormTransaction} from "../../type";
-import {fetchCategories} from "../../store/budgetThunks.ts";
+import {
+  canselModalTransaction,
+  resetEditTransaction,
+  selectCategories,
+  selectEditTransaction,
+  selectModal
+} from "../../store/budgetSlice.ts";
+import {ApiFormTransaction} from "../../type";
+import {addNewTransaction, editTransaction, fetchCategories, fetchTransactions} from "../../store/budgetThunks.ts";
 
-const defaultState: FormTransaction = {
+const defaultState: ApiFormTransaction = {
   type: "income",
   category: "",
   amount: "",
@@ -12,14 +18,24 @@ const defaultState: FormTransaction = {
 
 const ModalTransaction: React.FC = () => {
   const dispatch = useAppDispatch();
-  const [formState, setFormState] = useState<FormTransaction>(defaultState);
+  const [formState, setFormState] = useState<ApiFormTransaction>(defaultState);
   const show = useAppSelector(selectModal);
   const categories = useAppSelector(selectCategories);
+  const edit = useAppSelector(selectEditTransaction);
 
   useEffect(() => {
     dispatch(fetchCategories());
-  }, []);
+  }, [dispatch]);
 
+  useEffect(() => {
+    if (edit) {
+      setFormState({
+        amount:edit.amount,
+        type: edit.type,
+        category: edit.category,
+      });
+    }
+  }, [edit]);
 
   const changeForm = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (e.target.value !== " ") {
@@ -32,12 +48,29 @@ const ModalTransaction: React.FC = () => {
 
   const cansel = () => {
     dispatch(canselModalTransaction());
+    dispatch(resetEditTransaction());
     setFormState(defaultState);
   };
   
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log(formState);
+    if (edit) {
+      await dispatch(editTransaction({
+        id: edit.id,
+        category: formState.category,
+        amount: formState.amount,
+        createdAt: edit.createdAt,
+      }));
+    } else {
+      const date = new Date();
+      const newDate = date.toISOString();
+      await dispatch(addNewTransaction({
+        category: formState.category,
+        amount: formState.amount,
+        createdAt: newDate,
+      }));
+    }
+    await dispatch(fetchTransactions());
     setFormState(defaultState);
     dispatch(canselModalTransaction());
   };
@@ -76,7 +109,7 @@ const ModalTransaction: React.FC = () => {
             >
               {categories.map((item) => {
                 if (item.type === formState.type) {
-                  defaultState.category = item.name;
+                  defaultState.category = item.id;
                   return <option key={item.id} value={item.id}>{item.name}</option>;
                 }
               }).reverse()}
