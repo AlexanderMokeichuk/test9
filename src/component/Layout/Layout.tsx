@@ -1,9 +1,17 @@
 import React, {PropsWithChildren} from "react";
+import Header from "../Header/Header.tsx";
+import Modal from "../Modal/Modal.tsx";
 
 const Layout: React.FC<PropsWithChildren> = ({children}) => {
   return (
     <div className={"min-vh-100"}>
-      {children}
+      <Header/>
+      <main>
+        <div className={"container"}>
+          <Modal />
+          {children}
+        </div>
+      </main>
     </div>
   );
 };
