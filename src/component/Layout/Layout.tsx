@@ -1,6 +1,6 @@
 import React, {PropsWithChildren} from "react";
 import Header from "../Header/Header.tsx";
-import Modal from "../Modal/Modal.tsx";
+import ModalTransaction from "../ModalTransaction/ModalTransaction.tsx";
 
 const Layout: React.FC<PropsWithChildren> = ({children}) => {
   return (
@@ -8,7 +8,7 @@ const Layout: React.FC<PropsWithChildren> = ({children}) => {
       <Header/>
       <main>
         <div className={"container"}>
-          <Modal />
+          <ModalTransaction />
           {children}
         </div>
       </main>

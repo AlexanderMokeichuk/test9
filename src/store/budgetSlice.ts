@@ -2,29 +2,29 @@ import {createSlice} from "@reduxjs/toolkit";
 import {RootState} from "../app/store.ts";
 
 interface BudgetSlice {
-  modalIsActive: boolean,
+  modalTransaction: boolean,
 }
 
 const initialState: BudgetSlice = {
-  modalIsActive: false,
+  modalTransaction: false,
 };
 
 const budgetSlice = createSlice({
   name: "budget",
   initialState: initialState,
   reducers: {
-    showModal: (state) => {
-      state.modalIsActive = true;
+    showModalTransaction: (state) => {
+      state.modalTransaction = true;
     },
-    canselModal: (state) => {
-      state.modalIsActive = false;
+    canselModalTransaction: (state) => {
+      state.modalTransaction = false;
     },
   }
 });
 
 export const budgetReducer = budgetSlice.reducer;
 export const {
-  showModal,
-  canselModal,
+  showModalTransaction,
+  canselModalTransaction,
 } = budgetSlice.actions;
-export const selectModal = (state: RootState) => state.budget.modalIsActive;
+export const selectModal = (state: RootState) => state.budget.modalTransaction;
